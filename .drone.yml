@@ -38,7 +38,6 @@ steps:
     commands:
       - composer install
       - rm -rf ./.tmp/ ./build
-      - ./toolkit/phing project-properties-validate
 
   # TELEGRAM NOTIFICATIONS
   - name: notification
@@ -54,10 +53,10 @@ steps:
       message: >
         {{#success build.status}}
           ✅ Build succeeded #{{build.number}} of '{{repo.name}}' - Good job!
-          Commit by {{commit.author}} on '{{commit.branch}}':
-          {{commit.message}}
+          Commit {{commit.sha}} by {{commit.author}} on '{{commit.branch}}':
+          {{commit.message}} - See on Github: {{commit.link}}
         {{else}}
           ❌ Build failed #{{build.number}} of '{{repo.name}}' - Fix it please.
           Commit {{commit.sha}} by {{commit.author}} on '{{commit.branch}}':
-          {{commit.message}}
+          {{commit.message}} - See on Github: {{commit.link}}
         {{/success}}
