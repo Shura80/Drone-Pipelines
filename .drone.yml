@@ -1,6 +1,6 @@
 ---
 kind: pipeline
-name: drone
+name: drone-php7
 
 platform:
   os: linux
@@ -19,7 +19,7 @@ workspace:
 # SERVICES #
 services:
   - name: web
-    image: fpfis/php56-build
+    image: fpfis/http-php-dev
     environment:
       DOCUMENT_ROOT: /test/toolkit/build
       PORT: 8080
@@ -34,11 +34,10 @@ services:
 steps:
   # SETUP TOOLKIT #
   - name: toolkit
-    image: fpfis/php56-dev
+    image: fpfis/http-php-dev
     commands:
       - composer install
       - rm -rf ./.tmp/ ./build
-      - ./toolkit/phing project-properties-validate
 
   # TELEGRAM NOTIFICATIONS
   - name: notification
@@ -54,10 +53,10 @@ steps:
       message: >
         {{#success build.status}}
           ✅ Build succeeded #{{build.number}} of '{{repo.name}}' - Good job!
-          Commit by {{commit.author}} on '{{commit.branch}}':
-          {{commit.message}}
+          Commit {{commit.sha}} by {{commit.author}} on '{{commit.branch}}':
+          {{commit.message}} - See on Github: {{commit.link}}
         {{else}}
           ❌ Build failed #{{build.number}} of '{{repo.name}}' - Fix it please.
           Commit {{commit.sha}} by {{commit.author}} on '{{commit.branch}}':
-          {{commit.message}}
+          {{commit.message}} - See on Github: {{commit.link}}
         {{/success}}
