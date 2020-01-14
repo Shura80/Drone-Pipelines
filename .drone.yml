@@ -1,0 +1,61 @@
+---
+kind: pipeline
+name: drone
+
+platform:
+  os: linux
+  arch: amd64
+
+# GIT CLONE SECTION #
+git-clone:
+  git:
+    image: plugins/git:next
+
+# WORKSPACE #
+workspace:
+  base: /test
+  path: toolkit
+
+# SERVICES #
+services:
+  - name: web
+    image: fpfis/php56-build
+    environment:
+      DOCUMENT_ROOT: /test/toolkit/build
+      PORT: 8080
+
+  - name: mysql
+    image: fpfis/mysql56
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_MAX_ALLOWED_PACKET: 128M
+
+# BUILD SECTION #
+steps:
+  # SETUP TOOLKIT #
+  - name: toolkit
+    image: fpfis/php56-dev
+    commands:
+      - composer install
+      - rm -rf ./.tmp/ ./build
+      - ./toolkit/phing project-properties-validate
+
+  # TELEGRAM NOTIFICATIONS
+  - name: notification
+    image: appleboy/drone-telegram
+    secrets: [ telegram_token, telegram_to ]
+    when:
+      status: [ success, failure ]
+    settings:
+      token:
+        from_secret: telegram_token
+      to:
+        from_secret: telegram_to
+      message: >
+        {{#success build.status}}
+          ✅ Build succeeded #{{build.number}} of '{{repo.name}}' - Good job!
+          Commit by {{commit.author}} on {{commit.branch}}:
+        {{else}}
+          ❌ Build failed #{{build.number}} of '{{repo.name}}' - Fix it please.
+          Commit by {{commit.author}} on {{commit.branch}}:
+        {{/success}}
