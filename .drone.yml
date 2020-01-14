@@ -54,8 +54,10 @@ steps:
       message: >
         {{#success build.status}}
           ✅ Build succeeded #{{build.number}} of '{{repo.name}}' - Good job!
-          Commit by {{commit.author}} on {{commit.branch}}:
+          Commit by {{commit.author}} on '{{commit.branch}}':
+          {{commit.message}}
         {{else}}
           ❌ Build failed #{{build.number}} of '{{repo.name}}' - Fix it please.
-          Commit by {{commit.author}} on {{commit.branch}}:
+          Commit {{commit.sha}} by {{commit.author}} on '{{commit.branch}}':
+          {{commit.message}}
         {{/success}}
