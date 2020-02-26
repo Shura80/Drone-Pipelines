@@ -19,7 +19,7 @@ workspace:
 # SERVICES #
 services:
   - name: web
-    image: fpfis/http-php-dev
+    image: fpfis/httpd-php-dev
     environment:
       DOCUMENT_ROOT: /test/toolkit/build
       PORT: 8080
@@ -34,7 +34,7 @@ services:
 steps:
   # SETUP TOOLKIT #
   - name: toolkit
-    image: fpfis/http-php-dev
+    image: fpfis/httpd-php-dev
     commands:
       - composer install
       - rm -rf ./.tmp/ ./build
