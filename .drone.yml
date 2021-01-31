@@ -1,6 +1,6 @@
 ---
 kind: pipeline
-name: drone-php7
+name: drone-php7.3
 
 platform:
   os: linux
@@ -19,7 +19,7 @@ workspace:
 # SERVICES #
 services:
   - name: web
-    image: fpfis/httpd-php-dev
+    image: fpfis/httpd-php:7.3
     environment:
       DOCUMENT_ROOT: /test/toolkit/build
       PORT: 8080
@@ -34,7 +34,7 @@ services:
 steps:
   # SETUP TOOLKIT #
   - name: toolkit
-    image: fpfis/httpd-php-dev
+    image: fpfis/httpd-php-dev:7.3
     commands:
       - composer install
       - rm -rf ./.tmp/ ./build
